@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Stereograph Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <div class="panel">
+      <div class="panelHeader">UI viewport (2D): pick points</div>
+      <canvas id="uiCanvas"></canvas>
+    </div>
+
+    <div class="panel">
+      <div class="panelHeader">Output viewport (three.js): anaglyph</div>
+      <div id="glHost"></div>
+    </div>
+  </div>
+
+  <div id="status">Loading…</div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
