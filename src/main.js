@@ -1,6 +1,5 @@
 import { CONFIG } from './config.js';
 import { createState, nextPickName, allPicksDone, resetPicks } from './state.js';
-import { computeThetaFromPicks } from './math.js';
 import { createUICanvas } from './ui/uiCanvas.js';
 import { createThreeRenderer } from './render/threeRenderer.js';
 import { getSlvIiifImageUrl } from './iiif_slv.js';
@@ -11,7 +10,15 @@ const glHostEl = document.getElementById('glHost');
 
 const state = createState();
 
+const IE = getIeFromUrl(CONFIG.IE);
+
 function setStatus(msg) { statusEl.textContent = msg; }
+
+function getIeFromUrl(defaultIe) {
+  const url = new URL(window.location.href);
+  const ie = url.searchParams.get('ie');
+  return (ie && ie.trim().length) ? ie.trim() : defaultIe;
+}
 
 const three = createThreeRenderer({
   host: glHostEl
@@ -47,14 +54,18 @@ window.addEventListener('keydown', (ev) => {
     three.setUniforms({ uLInf: null, uRInf: null, theta: 0.0 });
     setStatus(`Reset. Next: ${nextPickName(state)}`);
   }
+  if (ev.key === '1') three.setMode('anaglyph');
+  if (ev.key === '2') three.setMode('wiggle');
+  if (ev.key === '+' ) three.setUniforms({ wiggleHz: 5.0 });
+  if (ev.key === '-' ) three.setUniforms({ wiggleHz: state.wiggleHz = Math.max(0.5, state.wiggleHz - 0.5) });
 });
 
 async function init() {
   try {
-    setStatus(`Resolving IIIF for ${CONFIG.IE}…`);
+    setStatus(`Resolving IIIF for ${IE}…`);
 
     // Choose a preview size for responsiveness; bump to "max" for full-res
-    const plateUrl = await getSlvIiifImageUrl(CONFIG.IE, {
+    const plateUrl = await getSlvIiifImageUrl(IE, {
       // quality: "gray",     // optional; if supported
       //size: "!3000,3000",     // good preview; adjust as needed
       size: "max",
@@ -71,7 +82,7 @@ async function init() {
     ui.resize();
     three.resize();
 
-    setStatus(`Loaded ${CONFIG.IE}. Pick: ${nextPickName(state)}`);
+    setStatus(`Loaded ${IE}. Pick: ${nextPickName(state)}`);
   } catch (err) {
     console.error(err);
     setStatus(`Failed: ${err?.message ?? String(err)}`);
