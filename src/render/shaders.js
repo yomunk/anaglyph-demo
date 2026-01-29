@@ -20,16 +20,12 @@ export const FRAG_ANAGLYPH = /* glsl */`
   float luma(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
 
   void main() {
-    vec2 A = vec2(0.5, 0.5);     // where "infinity" should land in the output
-    vec2 p = vUv - A;            // output coords relative to anchor
+    // Left eye stays fixed in the output coordinate system
+    vec2 uvL = vUv;
 
-    // LEFT: ensure vUv==A samples exactly at uLInf
-    vec2 uvL = p + uLInf;
+    // Shift right eye so that uRInf aligns with uLInf at the same output pixel
+    vec2 uvR = vUv + (uRInf - uLInf);
 
-    // RIGHT: undo rotation in output space, then sample around uRInf
-    vec2 uvR = p + uRInf;
-
-    // Clamp to avoid sampling outside
     uvL = clamp(uvL, 0.0, 1.0);
     uvR = clamp(uvR, 0.0, 1.0);
 
@@ -41,6 +37,7 @@ export const FRAG_ANAGLYPH = /* glsl */`
 
     gl_FragColor = vec4(gL, gR, gR, 1.0);
   }
+
 `;
 
 export const FRAG_WIGGLE = /* glsl */`
@@ -60,13 +57,14 @@ export const FRAG_WIGGLE = /* glsl */`
   vec2 halfToPlateUV_R(vec2 uvHalf) { return vec2(0.5 + uvHalf.x * 0.5, uvHalf.y); }
 
   void main() {
-    vec2 A = vec2(0.5, 0.5);
-    vec2 p = vUv - A;
+     // Left eye stays fixed in the output coordinate system
+    vec2 uvL = vUv;
 
-    // Aligned sample coords
-    vec2 uvL = clamp(p + uLInf, 0.0, 1.0);
+    // Shift right eye so that uRInf aligns with uLInf at the same output pixel
+    vec2 uvR = vUv + (uRInf - uLInf);
 
-    vec2 uvR = clamp(p + uRInf, 0.0, 1.0);
+    uvL = clamp(uvL, 0.0, 1.0);
+    uvR = clamp(uvR, 0.0, 1.0);
 
     vec3 colL = texture2D(uTex, halfToPlateUV_L(uvL)).rgb;
     vec3 colR = texture2D(uTex, halfToPlateUV_R(uvR)).rgb;

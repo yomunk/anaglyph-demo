@@ -3,10 +3,14 @@ import { createState, nextPickName, allPicksDone, resetPicks } from './state.js'
 import { createUICanvas } from './ui/uiCanvas.js';
 import { createThreeRenderer } from './render/threeRenderer.js';
 import { getSlvIiifImageUrl } from './iiif_slv.js';
+import { attachCropBox } from './ui/cropBox.js';
 
 const statusEl = document.getElementById('status');
 const uiCanvasEl = document.getElementById('uiCanvas');
 const glHostEl = document.getElementById('glHost');
+const overlayEl = document.getElementById('cropOverlay');
+
+
 
 const state = createState();
 
@@ -46,6 +50,12 @@ const ui = createUICanvas({
     );
   },
 });
+
+attachCropBox(overlayEl, {
+  onChange: (cropN) => three.setCropNormalized(cropN),
+  initial: { x0: 0.2, y0: 0.2, x1: 0.8, y1: 0.8 },
+});
+
 
 window.addEventListener('keydown', (ev) => {
   if (ev.key === 'r' || ev.key === 'R') {
@@ -90,3 +100,4 @@ async function init() {
 }
 
 init();
+
