@@ -10,8 +10,8 @@ export const FRAG_ANAGLYPH = /* glsl */`
   precision highp float;
 
   uniform sampler2D uTex;
-  uniform vec2  uLInf;
-  uniform vec2  uRInf;
+  uniform vec2  uLStat;
+  uniform vec2  uRStat;
 
   varying vec2 vUv;
 
@@ -23,8 +23,8 @@ export const FRAG_ANAGLYPH = /* glsl */`
     // Left eye stays fixed in the output coordinate system
     vec2 uvL = vUv;
 
-    // Shift right eye so that uRInf aligns with uLInf at the same output pixel
-    vec2 uvR = vUv + (uRInf - uLInf);
+    // Shift right eye so that uRStat aligns with uLStat at the same output pixel
+    vec2 uvR = vUv + (uRStat - uLStat);
 
     uvL = clamp(uvL, 0.0, 1.0);
     uvR = clamp(uvR, 0.0, 1.0);
@@ -44,8 +44,8 @@ export const FRAG_WIGGLE = /* glsl */`
   precision highp float;
 
   uniform sampler2D uTex;
-  uniform vec2  uLInf;
-  uniform vec2  uRInf;
+  uniform vec2  uLStat;
+  uniform vec2  uRStat;
 
   uniform float uTime;      // seconds
   uniform float uWiggleHz;  // flips per second
@@ -60,8 +60,8 @@ export const FRAG_WIGGLE = /* glsl */`
      // Left eye stays fixed in the output coordinate system
     vec2 uvL = vUv;
 
-    // Shift right eye so that uRInf aligns with uLInf at the same output pixel
-    vec2 uvR = vUv + (uRInf - uLInf);
+    // Shift right eye so that uRStat aligns with uLStat at the same output pixel
+    vec2 uvR = vUv + (uRStat - uLStat);
 
     uvL = clamp(uvL, 0.0, 1.0);
     uvR = clamp(uvR, 0.0, 1.0);

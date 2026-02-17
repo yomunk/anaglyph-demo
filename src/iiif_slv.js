@@ -2,7 +2,8 @@
 
 export async function getSlvIiifImageUrl(ieNumber, {
   canvasIndex = 0,
-  size = "max",          // or e.g. "pct:25" or "!2000,2000"
+  //size = "max",          // or e.g. "pct:25" or "!2000,2000"
+  size = "!3000,3000",
   region = "full",
   rotation = "0",
   quality = "default",   // or "gray"

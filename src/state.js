@@ -1,8 +1,8 @@
-export const PICK_ORDER = ['L_inf', 'R_inf'];
+export const PICK_ORDER = ['L_stat', 'R_stat'];
 
 export function createState() {
   return {
-    picks: { L_inf: null, R_inf: null, L_fg: null, R_fg: null },
+    picks: { L_stat: null, R_stat: null },
   };
 }
 

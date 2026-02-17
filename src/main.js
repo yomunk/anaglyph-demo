@@ -15,6 +15,7 @@ const overlayEl = document.getElementById('cropOverlay');
 const state = createState();
 
 const IE = getIeFromUrl(CONFIG.IE);
+ensureIeInUrl(IE);
 
 function setStatus(msg) { statusEl.textContent = msg; }
 
@@ -22,6 +23,15 @@ function getIeFromUrl(defaultIe) {
   const url = new URL(window.location.href);
   const ie = url.searchParams.get('ie');
   return (ie && ie.trim().length) ? ie.trim() : defaultIe;
+}
+
+function ensureIeInUrl(ie) {
+  const url = new URL(window.location.href);
+
+  if (!url.searchParams.has('ie')) {
+    url.searchParams.set('ie', ie);
+    window.history.replaceState({}, '', url);
+  }
 }
 
 const three = createThreeRenderer({
@@ -36,13 +46,10 @@ const ui = createUICanvas({
     state.picks[name] = halfUV;
 
     // Update three.js uniforms incrementally
-    const uLInf = state.picks.L_inf ? state.picks.L_inf : null;
-    const uRInf = state.picks.R_inf ? state.picks.R_inf : null;
+    const uLStat = state.picks.L_stat ? state.picks.L_stat : null;
+    const uRStat = state.picks.R_stat ? state.picks.R_stat : null;
 
-    let theta = 0;
-    // if (allPicksDone(state)) theta = computeThetaFromPicks(state.picks);
-
-    three.setUniforms({ uLInf, uRInf, theta });
+    three.setUniforms({ uLStat, uRStat });
 
     setStatus(allPicksDone(state)
       ? `All points set.`
@@ -61,7 +68,7 @@ window.addEventListener('keydown', (ev) => {
   if (ev.key === 'r' || ev.key === 'R') {
     resetPicks(state);
     ui.draw();
-    three.setUniforms({ uLInf: null, uRInf: null, theta: 0.0 });
+    three.setUniforms({ uLStat: null, uRStat: null });
     setStatus(`Reset. Next: ${nextPickName(state)}`);
   }
   if (ev.key === '1') three.setMode('anaglyph');
